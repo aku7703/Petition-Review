@@ -3,31 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Petition Review Flags</title>
+<title>Petition Review Flags (Class Prototype)</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&family=Readex+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: civic form tool. Two views (petitioner preview step, staff queue) under one header; content column max 960px. */
 :root{
-  --bg:#f5f7f9; --surface:#ffffff; --sunk:#eef2f5; --line:#d5dde4;
-  --fg:#17232e; --muted:#566573; --accent:#1d5e7a; --accent-ink:#ffffff; --accent-soft:#e1eef4;
-  --warn:#8a5a00; --warn-soft:#fdf1d8; --info:#2f5b8a; --info-soft:#e4ecf6; --ok:#2e6b45; --ok-soft:#e2f1e7;
-  --f-display:"Source Serif 4", Georgia, serif;
-  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Palette and type sampled from the Indiana courts self-service pages so the demo feels familiar. Text only: no seal, logo or "official website" claim. */
+  --bg:#f4f4f4; --surface:#ffffff; --sunk:#e5ebee; --line:#cfd8de;
+  --fg:#333333; --muted:#566573; --accent:#013b5a; --accent-ink:#ffffff; --accent-soft:#dbe9f1;
+  --warn:#8a5a00; --warn-soft:#fdf1d8; --info:#013b5a; --info-soft:#e4eef5; --ok:#2e6b45; --ok-soft:#e2f1e7;
+  --escape:#d9541e; --proto:#7a1f1f; --proto-soft:#fbe3e0;
+  --f-display:"Readex Pro", "Open Sans", Helvetica, Arial, sans-serif;
+  --f-body:"Rethink Sans", Helvetica, Arial, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0f161c; --surface:#16212a; --sunk:#1c2933; --line:#2c3b47;
-  --fg:#e3eaf0; --muted:#94a5b3; --accent:#5fb0d3; --accent-ink:#0b1a22; --accent-soft:#1a3442;
-  --warn:#f0c26a; --warn-soft:#3a2d12; --info:#8db5e6; --info-soft:#1c2c40; --ok:#7fcf9c; --ok-soft:#173022; color-scheme:dark}}
+/* Feedback: dark UI was hard to read, so light is the default; dark is opt-in via the toggle only. */
 :root[data-theme="dark"]{
   --bg:#0f161c; --surface:#16212a; --sunk:#1c2933; --line:#2c3b47;
   --fg:#e3eaf0; --muted:#94a5b3; --accent:#5fb0d3; --accent-ink:#0b1a22; --accent-soft:#1a3442;
   --warn:#f0c26a; --warn-soft:#3a2d12; --info:#8db5e6; --info-soft:#1c2c40; --ok:#7fcf9c; --ok-soft:#173022; color-scheme:dark}
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.5}
-.wrap{max-width:960px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
 header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
 h1{font-family:var(--f-display);font-size:1.75rem;line-height:1.2;margin:0;text-wrap:balance}
 .eyebrow{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:0 0 4px}
@@ -36,16 +35,76 @@ h1{font-family:var(--f-display);font-size:1.75rem;line-height:1.2;margin:0;text-
 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-.grid{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:20px;align-items:start}
+/* Class-demo chrome: warning bar, agency-style header, nav strip, title banner */
+.protobar{position:sticky;top:0;z-index:20;background:var(--proto);color:#fff;text-align:center;padding:10px 16px;font-size:.92rem;font-weight:600}
+.protobar b{background:#fff;color:var(--proto);border-radius:4px;padding:1px 8px;margin-right:8px;letter-spacing:.06em}
+.agency{background:var(--surface);border-bottom:1px solid var(--line)}
+.in{max-width:1120px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.brand{font-family:var(--f-display);font-weight:600;font-size:1.3rem;color:var(--accent);display:flex;align-items:center;gap:12px}
+.brand::before{content:"";width:40px;height:40px;border-radius:50%;border:2px dashed var(--proto);display:inline-block}
+.brand small{display:block;font-family:var(--f-body);font-weight:500;font-size:.78rem;color:var(--muted);letter-spacing:.04em}
+.escape{font:inherit;font-weight:700;font-size:.85rem;letter-spacing:.06em;background:var(--escape);color:#fff;border:0;border-radius:6px;padding:9px 18px;cursor:pointer}
+.navstrip{background:var(--sunk);border-bottom:1px solid var(--line)}
+.navstrip .in{padding-block:6px}
+.navstrip .tabs{background:none;padding:0;gap:2px}
+.navstrip .tabs button{color:var(--accent);font-size:.95rem;border-radius:0;padding:10px 16px;border-bottom:3px solid transparent}
+.navstrip .tabs button[aria-selected="true"]{background:none;box-shadow:none;border-bottom-color:var(--accent);color:var(--accent)}
+.titlebanner{background:linear-gradient(120deg,#013b5a,#2f6b8e);color:#fff}
+.titlebanner .in{padding-block:26px;display:block}
+.titlebanner h1{color:#fff;font-size:1.9rem}
+.crumbs{margin:6px 0 0;font-size:.85rem;opacity:.9}
+.proto{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:6px 10px;border:1px dashed var(--proto);background:var(--proto-soft);color:var(--proto);border-radius:6px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+:root[data-theme="dark"]{--proto:#ffb4a8;--proto-soft:#3a1c18}
+:root[data-theme="dark"] .protobar{background:#7a1f1f}
+/* Auto-playing product demo that opens on load */
+.demo{position:fixed;inset:0;z-index:50;background:rgba(1,30,48,.72);display:grid;place-items:center;padding:16px}
+.demo[hidden]{display:none}
+.demobox{background:var(--surface);color:var(--fg);width:min(760px,100%);max-height:calc(100dvh - 32px);overflow:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.demobox .proto{margin:0;border-radius:12px 12px 0 0;border-width:0 0 1px;justify-content:center}
+.demohead{padding:16px 22px 0}
+.demohead h2{margin:0;font-size:1.25rem}
+.stage{margin:14px 22px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-height:250px;padding:16px;position:relative;overflow:hidden}
+.scene{display:none;animation:rise .4s ease both}
+.scene.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.mfield{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 10px;margin:0 0 10px;font-size:.95rem;min-height:38px}
+.mlabel{font-weight:600;font-size:.82rem;margin:0 0 4px}
+.caret::after{content:"▏";animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.mnote{margin:0 0 10px;animation:rise .4s ease both}
+.mnote:nth-child(2){animation-delay:.6s}.mnote:nth-child(3){animation-delay:1.2s}
+.myn{display:flex;gap:6px;margin:6px 0 12px}
+.myn span{border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:6px 14px;font-weight:600;font-size:.88rem;color:var(--muted)}
+.myn span.pick{background:var(--accent-soft);border-color:var(--accent);color:var(--fg);animation:pick .5s .8s both}
+@keyframes pick{from{transform:scale(1)}50%{transform:scale(1.12)}to{transform:scale(1)}}
+.mrow{display:grid;grid-template-columns:70px 90px 1fr;gap:8px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:.88rem;align-items:center}
+.mrow.new{background:var(--accent-soft);animation:rise .5s .8s both}
+.demofoot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:0 22px 20px}
+.caption{margin:0 22px;font-weight:600;min-height:3.2em}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--accent)}
+.headright{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.themebtn{font:inherit;font-size:.85rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;padding:8px 12px;cursor:pointer}
+.steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 12px;padding:0;counter-reset:s}
+.steps li{counter-increment:s;display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:var(--sunk);color:var(--muted);font-weight:600;font-size:.9rem}
+.steps li::before{content:counter(s);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:.8rem}
+.steps li.done::before{content:"✓";background:var(--ok-soft);color:var(--ok);border-color:var(--ok)}
+.steps li.here{background:var(--accent-soft);color:var(--fg);outline:2px solid var(--accent)}
+.steps li.here::before{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.intro{margin:0 0 20px;font-size:1.02rem;max-width:70ch}
+.hint{display:block;font-weight:400;color:var(--muted);font-size:.85rem;margin-top:2px}
+.notelegend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--muted);margin:0 0 14px}
+.notelegend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:5px;font-style:normal}
+.files{font-size:.85rem;color:var(--muted);margin:6px 0 0;padding-left:18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:start}
 @media (max-width:780px){.grid{grid-template-columns:minmax(0,1fr)}}
-section.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+section.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:22px}
 h2{font-family:var(--f-display);font-size:1.15rem;margin:0 0 4px}
 .sub{color:var(--muted);font-size:.88rem;margin:0 0 14px}
 .stack{display:flex;flex-direction:column;gap:14px}
 label.lbl{display:block;font-weight:600;font-size:.85rem;margin-bottom:4px}
 select,input[type=text],input[type=date],textarea{font:inherit;width:100%;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
 textarea{min-height:64px;resize:vertical}
-.incident{border:1px solid var(--line);border-radius:6px;padding:12px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;background:var(--bg)}
+.incident{border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;grid-template-columns:190px minmax(0,1fr);gap:14px;background:var(--bg)}
 .incident .full{grid-column:1/-1}
 .incident header{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center}
 .incident header b{font-size:.85rem}
@@ -53,17 +112,17 @@ textarea{min-height:64px;resize:vertical}
 .btn{font:inherit;font-weight:600;font-size:.88rem;border-radius:6px;padding:8px 14px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .btn.link{border:0;background:none;color:var(--accent);padding:4px 0}
-.q{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.q{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;padding:14px 0;border-top:1px solid var(--line)}
 .q:first-of-type{border-top:0}
 .q span{min-width:0}
 .yn{display:flex;gap:4px;flex-shrink:0}
-.yn label{font-size:.82rem;font-weight:600;border:1px solid var(--line);border-radius:5px;padding:4px 10px;cursor:pointer;color:var(--muted)}
+.yn label{font-size:.9rem;font-weight:600;border:1px solid var(--line);border-radius:5px;padding:8px 16px;cursor:pointer;color:var(--muted)}
 .yn input{position:absolute;opacity:0;pointer-events:none}
 .yn input:checked+label{background:var(--accent-soft);border-color:var(--accent);color:var(--fg)}
 .yn input:focus-visible+label{outline:2px solid var(--accent);outline-offset:2px}
 
 aside.review{position:sticky;top:12px}
-.note{border-left:3px solid var(--info);background:var(--info-soft);padding:10px 12px;border-radius:0 6px 6px 0;font-size:.88rem}
+.note{border-left:4px solid var(--info);background:var(--info-soft);padding:12px 14px;border-radius:0 6px 6px 0;font-size:.95rem}
 .note.warn{border-color:var(--warn);background:var(--warn-soft)}
 .note.ok{border-color:var(--ok);background:var(--ok-soft)}
 .note b{display:block;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:2px}
@@ -95,20 +154,38 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
 </head>
 <body>
 
+<div class="protobar" role="alert"><b>PROTOTYPE</b>Class demo by CS4535 Team 4. This is not an official court website. Do not enter real names, addresses or case details. Nothing is saved or filed.</div>
+<header class="agency">
+  <div class="in">
+    <div class="brand"><span>Petition Review<small>Self-Service Legal Center · class prototype</small></span></div>
+    <div class="headright">
+      <button class="themebtn" id="watch" type="button">Watch demo</button>
+      <button class="themebtn" id="theme" type="button" aria-pressed="false">Dark mode</button>
+      <button class="escape" id="escape" type="button" title="Leaves this page right away">QUICK EXIT</button>
+    </div>
+  </div>
+</header>
+<nav class="navstrip" aria-label="Prototype views">
+  <div class="in"><div class="tabs" role="tablist">
+    <button id="tab-pet" role="tab" aria-selected="true">Petitioner preview</button>
+    <button id="tab-staff" role="tab" aria-selected="false">Court staff queue</button>
+  </div></div>
+</nav>
+<div class="titlebanner"><div class="in">
+  <h1>Petition Review Flags</h1>
+  <p class="crumbs">Courts › Self-Service Legal Center › Petition review (prototype)</p>
+</div></div>
+
 <div class="wrap">
-  <header class="top">
-    <div>
-      <p class="eyebrow">CS4535 Team 4 · Prototype, not an official court site</p>
-      <h1>Petition Review Flags</h1>
-    </div>
-    <div class="tabs" role="tablist">
-      <button id="tab-pet" role="tab" aria-selected="true">Petitioner preview</button>
-      <button id="tab-staff" role="tab" aria-selected="false">Court staff queue</button>
-    </div>
-  </header>
 
   <!-- PETITIONER VIEW -->
   <div id="view-pet">
+    <ol class="steps" aria-label="Where you are in filing">
+      <li class="done">Fill out the petition form</li>
+      <li class="here" aria-current="step">Check before you sign</li>
+      <li>Sign and file</li>
+    </ol>
+    <p class="intro">You have filled out your petition. Before you sign, look over the "Before you sign" notes. They point out things you may want to add or move. <b>They are optional. You can file either way.</b></p>
     <div class="grid">
       <div class="stack">
         <section class="panel">
@@ -116,16 +193,16 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
           <p class="sub">Preview step, after the form is filled out and before signing. Example data is filled in.</p>
           <div class="stack">
             <div>
-              <label class="lbl" for="ground">What is this petition based on?</label>
+              <label class="lbl" for="ground">What is this petition based on?<span class="hint">Question 1 on the court's form, PO-0100.</span></label>
               <select id="ground">
-                <option value="stalking" selected>Stalking</option>
-                <option value="dv">Domestic or family violence</option>
-                <option value="sa">Sexual assault</option>
-                <option value="harass">Repeated acts of harassment</option>
+                <option value="stalking" selected>I am or have been a victim of stalking</option>
+                <option value="dv">I am or have been a victim of domestic or family violence</option>
+                <option value="sa">I am or have been a victim of a sex offense</option>
+                <option value="harass">I am or have been a victim of repeated acts of harassment</option>
               </select>
             </div>
             <div>
-              <div class="lbl">Incidents</div>
+              <div class="lbl">Incidents<span class="hint">Question 8 on PO-0100: the date, place, what happened, and who was there for each incident.</span></div>
               <div id="incidents" class="stack"></div>
               <button class="btn link" id="add-inc" type="button">+ Add another incident</button>
             </div>
@@ -142,6 +219,11 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
       <aside class="review panel">
         <h2>Before you sign</h2>
         <p class="sub">These are notes, not requirements. You can file either way.</p>
+        <div class="notelegend" aria-label="What the colors mean">
+          <span><i style="background:var(--info)"></i>Blue: something may be missing</span>
+          <span><i style="background:var(--warn)"></i>Yellow: privacy, info the other party could see</span>
+          <span><i style="background:var(--ok)"></i>Green: nothing to check</span>
+        </div>
         <div id="notes" class="stack"></div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
           <button class="btn primary" id="submit" type="button">Continue to sign and file</button>
@@ -170,7 +252,45 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
     </div>
   </div>
 
-  <footer>Prototype checks are simple rules. In the full design, an LLM reads only the incident descriptions to pull out dates, places and separate incidents. Statute reference: <span class="cite">IC 35-45-10-1</span> (stalking definition).</footer>
+  <footer><p class="proto" role="note">Prototype · class demo · not an official court website</p>CS4535 Team 4 class project. Not affiliated with or endorsed by any court. Prototype checks are simple rules. In the full design, an LLM reads only the incident descriptions to pull out dates, places and separate incidents. Statute reference: <span class="cite">IC 35-45-10-1</span> (stalking definition). Field wording follows the Indiana Office of Judicial Administration's <a href="https://www.in.gov/courts/iocs/publications/po-forms/">Petition for an Order for Protection, PO-0100 (rev. 07/2026)</a> and Confidential Form, PO-0104.</footer>
+</div>
+<div class="demo" id="demo" role="dialog" aria-modal="true" aria-labelledby="demo-title">
+  <div class="demobox">
+    <p class="proto" role="note">Prototype · class demo · not an official court website · example data only</p>
+    <div class="demohead"><h2 id="demo-title">See how it works in 30 seconds</h2></div>
+    <div class="stage" aria-live="polite">
+      <div class="scene" data-cap="1. You fill out the petition the way you normally would. Dates, places and who was there come from the court's form, PO-0100.">
+        <div class="mlabel">Place</div><div class="mfield">Outside my job</div>
+        <div class="mlabel">What happened</div><div class="mfield caret" id="typed" style="min-height:92px"></div>
+      </div>
+      <div class="scene" data-cap="2. Before you sign, short notes point out what you may want to add or move. They are optional. You can file either way.">
+        <div class="note mnote"><b>You may want to check</b>Incident 1 has no date. Approximate is fine.</div>
+        <div class="note warn mnote"><b>Privacy</b>This looks like a phone number. It can go on the Confidential Form, PO-0104, instead.</div>
+        <div class="note mnote"><b>You may want to check</b>Stalking involves repeated conduct. If more than one incident happened, add each one.</div>
+      </div>
+      <div class="scene" data-cap="3. You answer a few safety questions with Yes, No or Unsure. Unsure is always okay.">
+        <div class="mlabel">Did an incident happen in the last 3 days?</div>
+        <div class="myn"><span class="pick">Yes</span><span>No</span><span>Unsure</span></div>
+        <div class="mlabel">Does the person have access to a gun or other weapon?</div>
+        <div class="myn"><span>Yes</span><span>No</span><span class="pick" style="animation-delay:1.6s">Unsure</span></div>
+      </div>
+      <div class="scene" data-cap="4. Court staff see a Review promptly tag. The queue stays in the order received. Flags never reorder or hide a petition.">
+        <div class="mrow"><b>09:12</b><span>PO-1041</span><span>Domestic/family violence</span></div>
+        <div class="mrow"><b>09:40</b><span>PO-1042</span><span>Harassment</span></div>
+        <div class="mrow"><b>10:05</b><span>PO-1043</span><span>Stalking</span></div>
+        <div class="mrow new"><b>10:31</b><span>PO-1044</span><span><span class="chip warn">Review promptly</span> <span class="chip warn">Recent incident</span> <span class="chip info">Possible confidential info</span></span></div>
+      </div>
+    </div>
+    <p class="caption" id="demo-cap"></p>
+    <div class="demofoot">
+      <div class="dots" id="demo-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="demo-replay" type="button">Replay</button>
+        <button class="btn" id="demo-next" type="button">Next</button>
+        <button class="btn primary" id="demo-skip" type="button">Try the prototype</button>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -187,7 +307,7 @@ const QSHORT={recent:"Recent incident",threat:"Threat to kill",weapon:"Weapon ac
 const GROUND={stalking:"Stalking",dv:"Domestic/family violence",sa:"Sexual assault",harass:"Harassment"};
 
 const example=()=>({ground:"stalking",
-  incidents:[{date:"",place:"Outside my job",what:"He waited by my car after my shift and followed me home. Call me at 317-555-0142 if needed."}],
+  incidents:[{date:"",place:"Outside my job",what:"He waited by my car after my shift and followed me home. Call me at 317-555-0142 if needed.",who:"Me"}],
   answers:{recent:"yes",threat:"no",weapon:"unsure",choke:"no",kids:"no",release:"no"}});
 let pet=example();
 
@@ -198,6 +318,7 @@ let queue=[
   {t:"10:31",ref:"PO-1044",ground:"sa",incidents:[{date:"2026-10-30",place:"Apartment at 412 Oak Street",what:"Assaulted me."}],answers:{recent:"no",threat:"no",weapon:"no",choke:"no",kids:"no",release:"yes"}}
 ];
 
+queue.forEach(p=>p.incidents.forEach(i=>{if(i.who===undefined)i.who=i.what?"Me":""}));
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const PII=/(\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b)|(\b\d{3}-\d{2}-\d{4}\b)|(\b\d{2,5}\s+\w+(\s\w+)?\s+(St|Street|Ave|Avenue|Rd|Road|Dr|Drive|Ln|Lane|Blvd|Ct|Court)\b)/i;
@@ -208,12 +329,15 @@ function completeness(p){
   if(p.ground==="stalking" && filled.length<2)
     out.push({kind:"info",short:"Stalking: 1 incident",
       text:`Stalking under <span class="cite">IC 35-45-10-1</span> involves repeated or continuing conduct. If more than one incident happened, you can add each one separately.`});
+  if(p.ground==="harass")
+    out.push({kind:"info",short:"Harassment only: hearing first",
+      text:`PO-0100 notes that when a petition is based on harassment alone, the judge can grant an order only after the other party is notified and a hearing is held, within 30 days. If something else also happened, like stalking or violence, you can say so in Question 1.`});
   p.incidents.forEach((i,n)=>{
-    const miss=[]; if(!i.date)miss.push("date"); if(!i.place.trim())miss.push("place"); if(!i.what.trim())miss.push("what happened");
+    const miss=[]; if(!i.date)miss.push("date"); if(!i.place.trim())miss.push("place"); if(!i.what.trim())miss.push("what happened"); if(!(i.who||"").trim())miss.push("who was there");
     if(miss.length) out.push({kind:"info",short:`Incident ${n+1}: no ${miss[0]}`,
-      text:`Incident ${n+1} has no ${miss.join(", ")}. If you know it, adding it can help the judge understand what happened. Approximate is fine.`});
-    if(PII.test(i.what+" "+i.place)) out.push({kind:"warn",short:"Possible confidential info",
-      text:`Incident ${n+1} looks like it includes a phone number or street address. That information can go in the confidential section so the other party doesn't see it.`});
+      text:`Incident ${n+1} has no ${miss.join(", ")}. Question 8 on PO-0100 asks for the date, place and the people present for each incident. Approximate is fine.`});
+    if(PII.test(i.what+" "+i.place+" "+(i.who||""))) out.push({kind:"warn",short:"Possible confidential info",
+      text:`Incident ${n+1} looks like it includes a phone number or street address. PO-0100 is a public document, and a copy may be sent to the other party. Your address and phone number can go on the Confidential Form, PO-0104, instead.`});
   });
   return out;
 }
@@ -223,9 +347,13 @@ function renderIncidents(){
   $("#incidents").innerHTML=pet.incidents.map((i,n)=>`
     <div class="incident">
       <header><b>Incident ${n+1}</b>${pet.incidents.length>1?`<button class="btn link" data-rm="${n}" type="button">Remove</button>`:""}</header>
-      <div><label class="lbl" for="d${n}">Date</label><input type="date" id="d${n}" data-i="${n}" data-f="date" value="${esc(i.date)}"></div>
-      <div><label class="lbl" for="p${n}">Place</label><input type="text" id="p${n}" data-i="${n}" data-f="place" value="${esc(i.place)}"></div>
-      <div class="full"><label class="lbl" for="w${n}">What happened</label><textarea id="w${n}" data-i="${n}" data-f="what">${esc(i.what)}</textarea></div>
+      <div><label class="lbl" for="d${n}">Date<span class="hint">Approximate is fine.</span></label><input type="date" id="d${n}" data-i="${n}" data-f="date" value="${esc(i.date)}"></div>
+      <div><label class="lbl" for="p${n}">Place<span class="hint">General is fine, like "outside my work." Keep your home address off this form.</span></label><input type="text" id="p${n}" data-i="${n}" data-f="place" value="${esc(i.place)}"></div>
+      <div class="full"><label class="lbl" for="w${n}">What happened<span class="hint">Describe this one incident in your own words.</span></label><textarea id="w${n}" data-i="${n}" data-f="what">${esc(i.what)}</textarea></div>
+      <div class="full"><label class="lbl" for="x${n}">Who was there<span class="hint">The form asks for everyone present. Include your own name if you were there.</span></label><input type="text" id="x${n}" data-i="${n}" data-f="who" value="${esc(i.who||"")}"></div>
+      <div class="full"><label class="lbl" for="f${n}">Photos or screenshots (optional)<span class="hint">For example, threatening texts. Prototype only: files stay on this device and are not uploaded.</span></label>
+        <input type="file" id="f${n}" data-file="${n}" accept="image/*,.pdf" multiple>
+        ${i.files&&i.files.length?`<ul class="files">${i.files.map(f=>`<li>${esc(f)}</li>`).join("")}</ul>`:""}</div>
     </div>`).join("");
 }
 function renderQuestions(){
@@ -260,19 +388,50 @@ function show(v){
 }
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2400)}
 
+/* A prototype warning at the top of every panel and table, so no screenshot or section can be mistaken for a real court page. */
+const PROTO='<p class="proto" role="note">Prototype · class demo · not a real court form</p>';
+document.querySelectorAll(".panel,.tablewrap").forEach(el=>el.insertAdjacentHTML("afterbegin",PROTO));
+$("#escape").onclick=()=>{location.replace("https://www.weather.gov/")};
+/* Demo walkthrough: opens first thing, auto-advances (unless reduced motion), can be skipped or replayed. */
+const demo={i:0,timer:null,type:null,
+  scenes:[...document.querySelectorAll("#demo .scene")],
+  reduce:matchMedia("(prefers-reduced-motion: reduce)").matches};
+const TYPED="He waited by my car after my shift and followed me home. Call me at 317-555-0142 if needed.";
+function demoGo(i){
+  clearTimeout(demo.timer);clearInterval(demo.type);
+  demo.i=(i+demo.scenes.length)%demo.scenes.length;
+  demo.scenes.forEach((s,n)=>s.classList.toggle("on",n===demo.i));
+  document.querySelectorAll("#demo-dots i").forEach((d,n)=>d.classList.toggle("on",n<=demo.i));
+  $("#demo-cap").textContent=demo.scenes[demo.i].dataset.cap;
+  $("#demo-next").textContent=demo.i===demo.scenes.length-1?"Start over":"Next";
+  if(demo.i===0){const el=$("#typed");let k=0;el.textContent=demo.reduce?TYPED:"";
+    if(!demo.reduce)demo.type=setInterval(()=>{el.textContent=TYPED.slice(0,++k);if(k>=TYPED.length)clearInterval(demo.type)},35)}
+  if(!demo.reduce&&demo.i<demo.scenes.length-1)demo.timer=setTimeout(()=>demoGo(demo.i+1),demo.i===0?5200:4200);
+}
+function demoOpen(){$("#demo").hidden=false;demoGo(0);$("#demo-skip").focus()}
+function demoClose(){clearTimeout(demo.timer);clearInterval(demo.type);$("#demo").hidden=true;$("#watch").focus()}
+$("#demo-next").onclick=()=>demoGo(demo.i+1);
+$("#demo-replay").onclick=()=>demoGo(0);
+$("#demo-skip").onclick=demoClose;
+$("#demo").addEventListener("click",e=>{if(e.target.id==="demo")demoClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#demo").hidden)demoClose()});
+$("#watch").onclick=demoOpen;
+demoOpen();
 $("#tab-pet").onclick=()=>show("pet");
 $("#tab-staff").onclick=()=>show("staff");
 $("#ground").onchange=e=>{pet.ground=e.target.value;renderNotes()};
 $("#incidents").addEventListener("input",e=>{const i=e.target.dataset.i;if(i!==undefined){pet.incidents[i][e.target.dataset.f]=e.target.value;renderNotes()}});
 $("#incidents").addEventListener("click",e=>{const r=e.target.dataset.rm;if(r!==undefined){pet.incidents.splice(+r,1);renderIncidents();renderNotes()}});
-$("#add-inc").onclick=()=>{pet.incidents.push({date:"",place:"",what:""});renderIncidents();renderNotes();$(`#d${pet.incidents.length-1}`).focus()};
+$("#add-inc").onclick=()=>{pet.incidents.push({date:"",place:"",what:"",who:""});renderIncidents();renderNotes();$(`#d${pet.incidents.length-1}`).focus()};
+$("#incidents").addEventListener("change",e=>{const n=e.target.dataset.file;if(n!==undefined){pet.incidents[n].files=[...e.target.files].map(f=>f.name);renderIncidents()}});
+$("#theme").onclick=()=>{const d=document.documentElement.dataset.theme!=="dark";if(d)document.documentElement.dataset.theme="dark";else delete document.documentElement.dataset.theme;$("#theme").textContent=d?"Light mode":"Dark mode";$("#theme").setAttribute("aria-pressed",d)};
 $("#questions").addEventListener("change",e=>{pet.answers[e.target.name.slice(2)]=e.target.value});
 $("#reset").onclick=()=>{pet=example();$("#ground").value=pet.ground;renderIncidents();renderQuestions();renderNotes()};
 $("#submit").onclick=()=>{
   const now=new Date(), t=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
   const ref="PO-"+(1041+queue.length);
   queue.push({t,ref,...JSON.parse(JSON.stringify(pet))});
-  toast(`Filed as ${ref}. Added to the end of the staff queue.`);
+  toast(`Demo only: nothing was filed. Added as ${ref} to the end of the example staff queue.`);
   show("staff");
 };
 $("#queue").addEventListener("click",e=>{const r=e.target.closest("tr.row");if(r){const p=queue[r.dataset.row];p.open=!p.open;renderQueue()}});
