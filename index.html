@@ -23,6 +23,9 @@
   --warn:#f0c26a; --warn-soft:#3a2d12; --info:#8db5e6; --info-soft:#1c2c40; --ok:#7fcf9c; --ok-soft:#173022; color-scheme:dark}
 
 *{box-sizing:border-box}
+body{margin:0}
+.demobar{position:sticky;top:0;z-index:10;background:#a3122a;color:#fff;padding:12px 16px;text-align:center;font-weight:700;font-size:1rem;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.demobar a{color:#fff}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6}
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
 header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
@@ -104,6 +107,7 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
 </style>
 </head>
 <body>
+<div class="demobar" role="alert">⚠ DEMO ONLY: a class project, NOT the Indiana court's filing site. Nothing you enter is sent to any court. <a href="https://www.in.gov/courts/selfservice/protection-orders/" rel="noopener">Real protection order help</a> · Hotline 1-800-332-7385 · <a href="filing.html">Full filing walkthrough (demo)</a></div>
 
 <div class="wrap">
   <header class="top">
