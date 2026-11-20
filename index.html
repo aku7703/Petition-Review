@@ -56,6 +56,32 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .proto{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:6px 10px;border:1px dashed var(--proto);background:var(--proto-soft);color:var(--proto);border-radius:6px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 :root[data-theme="dark"]{--proto:#ffb4a8;--proto-soft:#3a1c18}
 :root[data-theme="dark"] .protobar{background:#7a1f1f}
+/* Auto-playing product demo that opens on load */
+.demo{position:fixed;inset:0;z-index:50;background:rgba(1,30,48,.72);display:grid;place-items:center;padding:16px}
+.demo[hidden]{display:none}
+.demobox{background:var(--surface);color:var(--fg);width:min(760px,100%);max-height:calc(100dvh - 32px);overflow:auto;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.demobox .proto{margin:0;border-radius:12px 12px 0 0;border-width:0 0 1px;justify-content:center}
+.demohead{padding:16px 22px 0}
+.demohead h2{margin:0;font-size:1.25rem}
+.stage{margin:14px 22px;border:1px solid var(--line);border-radius:8px;background:var(--bg);min-height:250px;padding:16px;position:relative;overflow:hidden}
+.scene{display:none;animation:rise .4s ease both}
+.scene.on{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.mfield{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:8px 10px;margin:0 0 10px;font-size:.95rem;min-height:38px}
+.mlabel{font-weight:600;font-size:.82rem;margin:0 0 4px}
+.caret::after{content:"▏";animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.mnote{margin:0 0 10px;animation:rise .4s ease both}
+.mnote:nth-child(2){animation-delay:.6s}.mnote:nth-child(3){animation-delay:1.2s}
+.myn{display:flex;gap:6px;margin:6px 0 12px}
+.myn span{border:1px solid var(--line);background:var(--surface);border-radius:5px;padding:6px 14px;font-weight:600;font-size:.88rem;color:var(--muted)}
+.myn span.pick{background:var(--accent-soft);border-color:var(--accent);color:var(--fg);animation:pick .5s .8s both}
+@keyframes pick{from{transform:scale(1)}50%{transform:scale(1.12)}to{transform:scale(1)}}
+.mrow{display:grid;grid-template-columns:70px 90px 1fr;gap:8px;padding:8px 6px;border-bottom:1px solid var(--line);font-size:.88rem;align-items:center}
+.mrow.new{background:var(--accent-soft);animation:rise .5s .8s both}
+.demofoot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:0 22px 20px}
+.caption{margin:0 22px;font-weight:600;min-height:3.2em}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--accent)}
 .headright{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .themebtn{font:inherit;font-size:.85rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;padding:8px 12px;cursor:pointer}
 .steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 12px;padding:0;counter-reset:s}
@@ -133,6 +159,7 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
   <div class="in">
     <div class="brand"><span>Petition Review<small>Self-Service Legal Center · class prototype</small></span></div>
     <div class="headright">
+      <button class="themebtn" id="watch" type="button">Watch demo</button>
       <button class="themebtn" id="theme" type="button" aria-pressed="false">Dark mode</button>
       <button class="escape" id="escape" type="button" title="Leaves this page right away">QUICK EXIT</button>
     </div>
@@ -226,6 +253,44 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
   </div>
 
   <footer><p class="proto" role="note">Prototype · class demo · not an official court website</p>CS4535 Team 4 class project. Not affiliated with or endorsed by any court. Prototype checks are simple rules. In the full design, an LLM reads only the incident descriptions to pull out dates, places and separate incidents. Statute reference: <span class="cite">IC 35-45-10-1</span> (stalking definition). Field wording follows the Indiana Office of Judicial Administration's <a href="https://www.in.gov/courts/iocs/publications/po-forms/">Petition for an Order for Protection, PO-0100 (rev. 07/2026)</a> and Confidential Form, PO-0104.</footer>
+</div>
+<div class="demo" id="demo" role="dialog" aria-modal="true" aria-labelledby="demo-title">
+  <div class="demobox">
+    <p class="proto" role="note">Prototype · class demo · not an official court website · example data only</p>
+    <div class="demohead"><h2 id="demo-title">See how it works in 30 seconds</h2></div>
+    <div class="stage" aria-live="polite">
+      <div class="scene" data-cap="1. You fill out the petition the way you normally would. Dates, places and who was there come from the court's form, PO-0100.">
+        <div class="mlabel">Place</div><div class="mfield">Outside my job</div>
+        <div class="mlabel">What happened</div><div class="mfield caret" id="typed" style="min-height:92px"></div>
+      </div>
+      <div class="scene" data-cap="2. Before you sign, short notes point out what you may want to add or move. They are optional. You can file either way.">
+        <div class="note mnote"><b>You may want to check</b>Incident 1 has no date. Approximate is fine.</div>
+        <div class="note warn mnote"><b>Privacy</b>This looks like a phone number. It can go on the Confidential Form, PO-0104, instead.</div>
+        <div class="note mnote"><b>You may want to check</b>Stalking involves repeated conduct. If more than one incident happened, add each one.</div>
+      </div>
+      <div class="scene" data-cap="3. You answer a few safety questions with Yes, No or Unsure. Unsure is always okay.">
+        <div class="mlabel">Did an incident happen in the last 3 days?</div>
+        <div class="myn"><span class="pick">Yes</span><span>No</span><span>Unsure</span></div>
+        <div class="mlabel">Does the person have access to a gun or other weapon?</div>
+        <div class="myn"><span>Yes</span><span>No</span><span class="pick" style="animation-delay:1.6s">Unsure</span></div>
+      </div>
+      <div class="scene" data-cap="4. Court staff see a Review promptly tag. The queue stays in the order received. Flags never reorder or hide a petition.">
+        <div class="mrow"><b>09:12</b><span>PO-1041</span><span>Domestic/family violence</span></div>
+        <div class="mrow"><b>09:40</b><span>PO-1042</span><span>Harassment</span></div>
+        <div class="mrow"><b>10:05</b><span>PO-1043</span><span>Stalking</span></div>
+        <div class="mrow new"><b>10:31</b><span>PO-1044</span><span><span class="chip warn">Review promptly</span> <span class="chip warn">Recent incident</span> <span class="chip info">Possible confidential info</span></span></div>
+      </div>
+    </div>
+    <p class="caption" id="demo-cap"></p>
+    <div class="demofoot">
+      <div class="dots" id="demo-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="demo-replay" type="button">Replay</button>
+        <button class="btn" id="demo-next" type="button">Next</button>
+        <button class="btn primary" id="demo-skip" type="button">Try the prototype</button>
+      </div>
+    </div>
+  </div>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -327,6 +392,31 @@ function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeou
 const PROTO='<p class="proto" role="note">Prototype · class demo · not a real court form</p>';
 document.querySelectorAll(".panel,.tablewrap").forEach(el=>el.insertAdjacentHTML("afterbegin",PROTO));
 $("#escape").onclick=()=>{location.replace("https://www.weather.gov/")};
+/* Demo walkthrough: opens first thing, auto-advances (unless reduced motion), can be skipped or replayed. */
+const demo={i:0,timer:null,type:null,
+  scenes:[...document.querySelectorAll("#demo .scene")],
+  reduce:matchMedia("(prefers-reduced-motion: reduce)").matches};
+const TYPED="He waited by my car after my shift and followed me home. Call me at 317-555-0142 if needed.";
+function demoGo(i){
+  clearTimeout(demo.timer);clearInterval(demo.type);
+  demo.i=(i+demo.scenes.length)%demo.scenes.length;
+  demo.scenes.forEach((s,n)=>s.classList.toggle("on",n===demo.i));
+  document.querySelectorAll("#demo-dots i").forEach((d,n)=>d.classList.toggle("on",n<=demo.i));
+  $("#demo-cap").textContent=demo.scenes[demo.i].dataset.cap;
+  $("#demo-next").textContent=demo.i===demo.scenes.length-1?"Start over":"Next";
+  if(demo.i===0){const el=$("#typed");let k=0;el.textContent=demo.reduce?TYPED:"";
+    if(!demo.reduce)demo.type=setInterval(()=>{el.textContent=TYPED.slice(0,++k);if(k>=TYPED.length)clearInterval(demo.type)},35)}
+  if(!demo.reduce&&demo.i<demo.scenes.length-1)demo.timer=setTimeout(()=>demoGo(demo.i+1),demo.i===0?5200:4200);
+}
+function demoOpen(){$("#demo").hidden=false;demoGo(0);$("#demo-skip").focus()}
+function demoClose(){clearTimeout(demo.timer);clearInterval(demo.type);$("#demo").hidden=true;$("#watch").focus()}
+$("#demo-next").onclick=()=>demoGo(demo.i+1);
+$("#demo-replay").onclick=()=>demoGo(0);
+$("#demo-skip").onclick=demoClose;
+$("#demo").addEventListener("click",e=>{if(e.target.id==="demo")demoClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("#demo").hidden)demoClose()});
+$("#watch").onclick=demoOpen;
+demoOpen();
 $("#tab-pet").onclick=()=>show("pet");
 $("#tab-staff").onclick=()=>show("staff");
 $("#ground").onchange=e=>{pet.ground=e.target.value;renderNotes()};
