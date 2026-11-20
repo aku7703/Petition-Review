@@ -7,6 +7,7 @@ CS4535 Team 4 prototype for Indiana's Protection Order E-filing Service. The loo
 - **Petitioner preview:** neutral "Before you sign" notes (missing dates/places, single-incident stalking petitions, possible confidential info in public fields). Filing is never blocked.
 - **Court staff queue:** petitions listed in the order received, with petitioner-reported safety flags and completeness flags. No scoring or ranking.
 - **Filing walkthrough (`filing.html`):** a demo that follows the question order of Indiana's PO-0100 petition, with our safety questions and "Check before you sign" step added before signing. It has its own styling (not the state's), a warning on every screen, and no real submission.
+- **PDF practice copy:** on the last step of the walkthrough, "Download practice copy (PDF)" saves the answers as a PDF that follows PO-0100's question order, with checked boxes. It's built in the browser with [jsPDF](https://github.com/parallax/jsPDF) (pinned, loaded from cdnjs with an integrity hash), so nothing is uploaded. Every page is marked "Practice copy, not an official court form, not for filing." Names, addresses, the case number and signature lines are left blank on purpose. An optional last page lists the "Check before you sign" notes. Safety answers are never included.
 
 Open `index.html` in a browser, or view it on GitHub Pages once enabled.
 
