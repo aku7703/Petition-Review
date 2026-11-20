@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap">
 <!-- Makes the practice-copy PDF in the browser. Nothing is uploaded anywhere. -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" integrity="sha512-qZvrmS2ekKPF2mSznTQsxqPgnpkI4DNTlrdUmTzrDgektczlKNRRhy5X5AAOnx5S09ydFYWWNSfcEqDTTHgtNA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js" integrity="sha512-z8IYLHO8bTgFqj+yrPyIJnzBDf7DDhWwiEsk4sY+Oe6J2M+WQequeGS7qioI5vT6rXgVRb4K1UVQC5ER7MKzKQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 .dl{border:2px solid var(--accent);background:var(--accent-soft);border-radius:8px;padding:16px;margin-top:16px}
 .dl h3{margin:0 0 4px;font-family:var(--f-display);font-size:1.1rem}
@@ -100,9 +101,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 const STEPS=["Type of order","Relationship","Respondent and cases","What happened","What you are asking for","Safety questions","Check before you sign","Sign"];
 const OURS=new Set([5,6]);
 const GROUNDS=[["dv","I am or have been a victim of domestic or family violence"],["sa","I am or have been a victim of a sex offense"],["stalking","I am or have been a victim of stalking"],["harass","I am or have been a victim of repeated acts of harassment"]];
-const RELS=["The Respondent is my spouse","The Respondent used to be my spouse","We lived together in an intimate relationship","We have a child in common","We are dating, or have dated","We are, or have been, in a sexual relationship","We are related by blood or adoption","We are, or used to be, related by marriage","The Respondent is, or was, my guardian, ward, custodian or foster parent","None of these (not a family or household member)"];
+const RELS=["The Respondent is my spouse","The Respondent used to be my spouse","We lived together in an intimate relationship","We have a child in common","We are dating, or have dated","We are, or have been, in a sexual relationship","We are related by blood or adoption","We are, or used to be, related by marriage","The Respondent is, or was, my guardian","The Respondent is, or was, my ward","The Respondent is, or was, my custodian","The Respondent is, or was, my foster parent","None of these (not a family or household member)"];
 const ACTS=["Attempted to cause physical harm to me","Threatened to cause physical harm to me","Caused physical harm to me","Placed me in fear of physical harm","Caused me to engage in sexual activity by force, threat or duress","Committed stalking against me","Committed a sex offense against me","Committed animal cruelty to threaten or intimidate a family or household member","Committed repeated acts of harassment against me"];
-const RELIEF=[["nocontact","Prohibit the Respondent from contacting or communicating with me"],["noviolence","Prohibit the Respondent from committing or threatening violence, stalking or sex offenses against me"],["stayaway","Order the Respondent to stay away from my residence, school, work or other place"],["tracking","Prohibit the Respondent from using a tracking device to find me"],["evict","Evict the Respondent from my residence"],["animals","Protect animals in my household"],["parenting","Arrangements for parenting time (hearing required)"],["support","Payments such as rent, support or expenses (hearing required)"],["firearm","Prohibit the Respondent from using or possessing a firearm, ammunition or deadly weapon"]];
+const RELIEF=[["nocontact","Prohibit the Respondent from contacting or communicating with me"],["noviolence","Prohibit the Respondent from committing or threatening violence, stalking or sex offenses against me"],["stayaway","Order the Respondent to stay away from my residence, school, work or other place"],["tracking","Prohibit the Respondent from using a tracking device to find me"],["evict","Evict the Respondent from my residence"],["animals","Protect animals in my household"],["parenting","Arrangements for parenting time with our minor child(ren) (hearing required)"],["attorney","Order the Respondent to pay my attorney fees (hearing required)"],["rent","Order the Respondent to pay rent for my residence (hearing required)"],["childsupport","Order the Respondent to pay child support (hearing required)"],["spousal","Order the Respondent to pay support or maintenance for me (hearing required)"],["firearm","Prohibit the Respondent from using or possessing a firearm, ammunition or deadly weapon"]];
 const QUESTIONS=[["recent","Did an incident happen in the last 3 days?"],["threat","Has the person threatened to kill you or someone close to you?"],["weapon","Does the person have access to a gun or other weapon?"],["choke","Has the person ever choked or strangled you?"],["kids","Are children at risk?"],["release","Is the person about to be released or likely to contact you soon?"]];
 const PII=/(\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b)|(\b\d{3}-\d{2}-\d{4}\b)|(\b\d{2,5}\s+\w+(\s\w+)?\s+(St|Street|Ave|Avenue|Rd|Road|Dr|Drive|Ln|Lane|Blvd|Ct|Court)\b)/i;
 
@@ -158,7 +159,7 @@ const VIEWS=[
 ];
 
 /* ---------- Practice-copy PDF (built in the browser; follows PO-0100 question order) ---------- */
-const RELS_FORM=["the Respondent is my spouse;","the Respondent used to be my spouse;","the Respondent and I resided together in an intimate relationship;","the Respondent and I have a child in common;","the Respondent and I are dating, or have dated, each other;","the Respondent and I are, or have been, engaged in a sexual relationship;","the Respondent and I are related by blood or adoption;","the Respondent and I are, or used to be, related by marriage;","the Respondent is, or used to be, my guardian, ward, custodian or foster parent;","the Respondent is not a family or household member (see lines b, c and d below)."];
+const RELS_FORM=["the Respondent is my spouse;","the Respondent used to be my spouse;","the Respondent and I resided together in an intimate relationship;","the Respondent and I have a child in common;","the Respondent and I are dating, or have dated, each other;","the Respondent and I are, or have been, engaged in a sexual relationship;","the Respondent and I are related by blood or adoption;","the Respondent and I are, or used to be, related by marriage;","the Respondent is, or used to be, my guardian;","the Respondent is, or used to be, my ward;","the Respondent is, or used to be, my custodian;","the Respondent is, or used to be, my foster parent;","the Respondent is not a family or household member (see lines b, c and d below)."];
 const pdfClean=t=>String(t??"").replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,"-").replace(/…/g,"...").replace(/[^\x09\x0A\x20-\x7E\xA0-\xFF]/g,"?");
 const fmtDate=d=>{const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||"");return m?`${m[2]}/${m[3]}/${m[1]}`:""};
 let incNotes=false;
@@ -248,15 +249,123 @@ function buildPdf(withNotes){
   doc.setProperties({title:"Practice copy: Petition for an Order for Protection (NOT an official court form)",subject:"Class prototype, not for filing",author:"CS4535 Team 4 prototype"});
   return doc;
 }
-function downloadPdf(){
-  if(!window.jspdf){alert("The PDF tool could not load. Check your internet connection and try again.");return}
-  buildPdf(incNotes).save("practice-copy-protection-order-petition.pdf");
+/* ---------- Fill the court's own PO-0100 (forms/PO-0100.pdf, rev. 07/2026) ----------
+   The court's PDF has no fillable fields, so we draw answers on top of it.
+   Positions are in PDF points measured from the top-left of the page, taken from that exact file:
+   [page index, x, y of the bottom of the text line]. A checkbox is a short run of underscores, so x is its center. */
+const POS={
+  ground:{dv:[0,135,381.2],sa:[0,135,395.0],stalking:[0,135,408.8],harass:[0,135,422.6]},
+  rel:[[0,171,505.4],[0,171,519.2],[0,171,533.0],[0,171,546.8],[0,171,560.6],[0,171,574.4],[0,171,602.0],[0,171,629.6],[0,171,657.2],[0,171,671.0],[0,171,684.8],[0,171,698.6]],
+  notFamily:{stalking:[1,171,280.0],sa:[1,171,293.8],harass:[1,171,307.6]},
+  age:[1,276,335.5],
+  cases:{rows:[445.9,459.7,473.5,487.3,501.1],page:1,x:129,w:392,box:[1,141,514.9]},
+  county:{respondent:[1,141,638.8],incident:[1,141,652.6],me:[1,141,680.2]},
+  acts:[[2,135,252.4],[2,135,266.2],[2,135,280.0],[2,135,293.8],[2,135,307.6],[2,135,335.2],[2,135,349.0],[2,135,362.8],[2,135,418.3]],
+  incidents:[
+    {date:[2,234,501.1],place:[2,222,514.9],placeW:296,desc:[[2,556.0],[2,569.8],[2,583.9]],who:[[2,622.5],[2,634.0]]},
+    {date:[2,234,662.0],place:[2,222,675.8],placeW:150,desc:[[2,700.7],[2,712.3],[2,723.8]],who:[[3,114.4],[3,128.2]]},
+    {date:[3,234,156.1],place:[3,222,169.9],placeW:150,desc:[[3,197.2],[3,211.0],[3,224.8]],who:[[3,266.2],[3,280.0]]}],
+  textX:129,textW:392,
+  box8a:[3,141,294.1],
+  relief:{noviolence:[3,135,415.8],tracking:[3,135,540.0],nocontact:[3,135,608.8],stayaway:[3,135,650.2],evict:[4,135,362.8],animals:[4,153,487.0],
+    parenting:[5,135,487.0],attorney:[5,135,528.4],rent:[5,135,542.2],childsupport:[5,135,569.8],spousal:[5,135,583.6],firearm:[6,135,155.8]},
+  pagesAttached:[6,276,583.9]
+};
+const BASE=4.2; // distance from a line's bottom edge up to its baseline (tuned by looking at the rendered PDF)
+
+async function buildOfficialPdf(withNotes){
+  const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
+  const res=await fetch("forms/PO-0100.pdf");
+  if(!res.ok)throw new Error("form not found");
+  const doc=await PDFDocument.load(await res.arrayBuffer());
+  const font=await doc.embedFont(StandardFonts.Helvetica), bold=await doc.embedFont(StandardFonts.HelveticaBold);
+  const pages=doc.getPages(), H=792, ink=rgb(.05,.12,.55);
+  const baseY=y1=>H-(y1-BASE);
+  const X=([pg,cx,y1])=>{const p=pages[pg],y=baseY(y1);p.drawLine({start:{x:cx-4.5,y:y+9},end:{x:cx+4.5,y:y+1},thickness:1.6,color:ink});p.drawLine({start:{x:cx-4.5,y:y+1},end:{x:cx+4.5,y:y+9},thickness:1.6,color:ink})};
+  const put=(pg,x,y1,t,w,size=10)=>{t=pdfClean(t);if(!t)return;let sz=size;while(sz>6.5&&font.widthOfTextAtSize(t,sz)>w)sz-=.5;pages[pg].drawText(t,{x,y:baseY(y1)+1.5,size:sz,font,color:ink})};
+  const wrap=(t,w,sz)=>{const out=[];String(pdfClean(t)).split(/\n/).forEach(par=>{let cur="";par.split(/\s+/).filter(Boolean).forEach(word=>{const nx=cur?cur+" "+word:word;if(font.widthOfTextAtSize(nx,sz)<=w)cur=nx;else{if(cur)out.push(cur);cur=word}});out.push(cur)});return out};
+  const att=[]; // attachment text blocks
+
+  // Q1 and Q2
+  s.grounds.forEach(g=>POS.ground[g]&&X(POS.ground[g]));
+  const ri=RELS.indexOf(s.rel);
+  if(ri>=0&&ri<POS.rel.length)X(POS.rel[ri]);
+  if(ri===RELS.length-1)s.grounds.forEach(g=>POS.notFamily[g]&&X(POS.notFamily[g]));
+  // Q3 and Q4
+  if(String(s.age||"").trim())put(...[POS.age[0],POS.age[1],POS.age[2]],String(s.age).trim(),44);
+  if(s.cases&&s.cases.trim()){
+    const lines=wrap(s.cases,POS.cases.w,9);
+    if(lines.length<=5)lines.forEach((l,i)=>put(POS.cases.page,POS.cases.x,POS.cases.rows[i],l,POS.cases.w,9));
+    else{lines.slice(0,4).forEach((l,i)=>put(POS.cases.page,POS.cases.x,POS.cases.rows[i],l,POS.cases.w,9));put(POS.cases.page,POS.cases.x,POS.cases.rows[4],"(continued on Attachment 4a)",POS.cases.w,9);X(POS.cases.box);att.push(["Attachment 4a: other cases (PO-0100, Question 4)",s.cases])}
+  }
+  // Q5, Q7
+  POS.county[s.county]&&X(POS.county[s.county]);
+  s.acts.forEach(a=>{const i=ACTS.indexOf(a);if(i>=0)X(POS.acts[i])});
+  // Q8: three incidents fit on the form; the rest go on Attachment 8a
+  let need8a=false;const extra=[];
+  s.incidents.forEach((inc,n)=>{
+    const full=`Incident #${n+1}\nDate: ${fmtDate(inc.date)||"(not given)"}\nPlace: ${inc.place||"(not given)"}\nWhat happened: ${inc.what||"(not given)"}\nPeople present: ${inc.who||"(not given)"}`;
+    if(n>=POS.incidents.length){need8a=true;extra.push(full);return}
+    const P=POS.incidents[n];
+    put(P.date[0],P.date[1],P.date[2],fmtDate(inc.date),78);
+    if(inc.place&&font.widthOfTextAtSize(pdfClean(inc.place),9)>P.placeW){put(P.place[0],P.place[1],P.place[2],"(see Attachment 8a)",P.placeW);need8a=true;extra.push(full)}
+    else put(P.place[0],P.place[1],P.place[2],inc.place,P.placeW);
+    const dl=wrap(inc.what||"",POS.textW,9.5),whoL=wrap(inc.who||"",POS.textW,9.5);
+    const over=dl.length>3||whoL.length>2;
+    if(over&&!(inc.place&&font.widthOfTextAtSize(pdfClean(inc.place),9)>P.placeW)){need8a=true;extra.push(full)}
+    (over?dl.slice(0,2).concat(["(continued on Attachment 8a)"]):dl).slice(0,3).forEach((l,i)=>put(P.desc[i][0],POS.textX,P.desc[i][1],l,POS.textW,9.5));
+    (whoL.length>2?[whoL[0],"(continued on Attachment 8a)"]:whoL).forEach((l,i)=>put(P.who[i][0],POS.textX,P.who[i][1],l,POS.textW,9.5));
+  });
+  if(need8a){X(POS.box8a);att.push(["Attachment 8a: incidents (PO-0100, Question 8)",extra.join("\n\n")])}
+  // Q9
+  s.relief.forEach(r=>POS.relief[r]&&X(POS.relief[r]));
+
+  // Attachment pages (only when something did not fit on the form)
+  let attPages=0;
+  const addAtt=(title,body)=>{
+    let page=doc.addPage([612,792]);attPages++;let y=90;
+    const head=()=>{page.drawText(title,{x:72,y:H-y,size:13,font:bold,color:rgb(0,0,0)});y+=20;page.drawText("To the Petition for an Order for Protection (PO-0100). Petitioner: ______________________  Case No.: ______________",{x:72,y:H-y,size:8.5,font,color:rgb(.25,.25,.25)});y+=24};
+    head();
+    wrap(body,468,10.5).forEach(l=>{if(y>720){page=doc.addPage([612,792]);attPages++;y=90;head()}page.drawText(l,{x:72,y:H-y,size:10.5,font,color:ink});y+=14.5});
+  };
+  att.forEach(([t,b])=>addAtt(t,b));
+  if(attPages)put(...[POS.pagesAttached[0],POS.pagesAttached[1],POS.pagesAttached[2]],String(attPages),24);
+
+  // Optional notes page: clearly not part of the court form, last in the file
+  if(withNotes){
+    const pg=doc.addPage([612,792]);let y=90;
+    pg.drawText('Notes from "Check before you sign" (not part of the court form)',{x:72,y:H-y,size:13,font:bold});y+=20;
+    pg.drawText("Remove this page before you file. These are suggestions, not requirements, and not legal advice.",{x:72,y:H-y,size:9,font,color:rgb(.25,.25,.25)});y+=26;
+    const c=notes();(c.length?c:[["ok","Nothing looks missing."]]).forEach(([k,t])=>wrap((k==="warn"?"PRIVACY: ":"YOU MAY WANT TO CHECK: ")+t,468,10.5).concat([""]).forEach(l=>{pg.drawText(l,{x:72,y:H-y,size:10.5,font,color:ink});y+=14.5}));
+  }
+
+  // Margin stamp on every page. It sits in the blank top margin, so it never covers the court's text.
+  doc.getPages().forEach(p=>p.drawText("Prepared with Petition Review Flags, a class prototype (CS4535 Team 4) not connected to any court. Check every answer before you sign.",{x:56,y:H-26,size:7.5,font,color:rgb(.64,.07,.16)}));
+  doc.setTitle("PO-0100 with my answers (prepared with a class prototype)");
+  return await doc.save();
+}
+
+function saveBlob(bytes,name){
+  const url=URL.createObjectURL(new Blob([bytes],{type:"application/pdf"}));
+  const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+async function downloadPdf(){
+  try{
+    if(!window.PDFLib)throw new Error("pdf-lib not loaded");
+    saveBlob(await buildOfficialPdf(incNotes),"PO-0100-with-my-answers.pdf");
+  }catch(err){
+    console.warn("Could not fill the official form, using the practice copy instead:",err);
+    if(!window.jspdf){alert("The PDF tool could not load. Check your internet connection and try again.");return}
+    buildPdf(incNotes).save("practice-copy-protection-order-petition.pdf");
+    alert("We could not open the court's form here, so this is a plain practice copy that follows the same questions. Opening this demo from its web address (not as a saved file) fixes that.");
+  }
 }
 const dlBox=()=>`<div class="dl"><h3>Take a copy with you</h3>
-  <p>Download your answers as a PDF that follows the order of the court's form, PO-0100. It is made on your device. Nothing is uploaded.</p>
-  <p><b>It is a practice copy, not an official form.</b> It is marked on every page and cannot be filed. Use it to copy your answers onto the real form, or to talk with an advocate.</p>
-  <label><input type="checkbox" id="incnotes" ${incNotes?"checked":""}> Also include the "Check before you sign" notes (a separate last page)</label>
-  <button class="btn primary" id="dl" type="button">Download practice copy (PDF)</button></div>`;
+  <p>Download your answers filled in on the court's own form, PO-0100. It is made on your device. Nothing is uploaded.</p>
+  <p><b>Check every answer before you sign.</b> Names, the case number, your address and your signature are left blank for you to complete by hand. This demo is not connected to any court, and a note at the top of each page says so.</p>
+  <label><input type="checkbox" id="incnotes" ${incNotes?"checked":""}> Also include the "Check before you sign" notes (a separate last page, not part of the court form)</label>
+  <button class="btn primary" id="dl" type="button">Download PO-0100 with my answers (PDF)</button></div>`;
 
 function render(){
   if(step<0){$("#app").innerHTML=`<div class="gate"><h1>⚠ This is a demo, not the court's filing site</h1>
