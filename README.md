@@ -1,6 +1,8 @@
 # Petition Review Flags
 
-CS4535 Team 4 prototype for Indiana's Protection Order E-filing Service.
+> **PROTOTYPE. Class demo, not an official court website.** CS4535 Team 4. Not affiliated with or endorsed by any court. Don't enter real personal or case information. Nothing is saved or filed.
+
+CS4535 Team 4 prototype for Indiana's Protection Order E-filing Service. The look (colors, fonts, layout) follows the Indiana courts self-service pages so the demo feels familiar. It uses no seal or logo, and a prototype warning appears at the top of the page and in every section. See [FEEDBACK.md](FEEDBACK.md) for what we changed after Shark Tank feedback.
 
 - **Petitioner preview:** neutral "Before you sign" notes (missing dates/places, single-incident stalking petitions, possible confidential info in public fields). Filing is never blocked.
 - **Court staff queue:** petitions listed in the order received, with petitioner-reported safety flags and completeness flags. No scoring or ranking.

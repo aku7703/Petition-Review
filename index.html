@@ -3,17 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Petition Review Flags</title>
+<title>Petition Review Flags (Class Prototype)</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&family=Readex+Pro:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* Layout: civic form tool. Two views (petitioner preview step, staff queue) under one header; content column max 960px. */
 :root{
-  --bg:#f5f7f9; --surface:#ffffff; --sunk:#eef2f5; --line:#d5dde4;
-  --fg:#17232e; --muted:#566573; --accent:#1d5e7a; --accent-ink:#ffffff; --accent-soft:#e1eef4;
-  --warn:#8a5a00; --warn-soft:#fdf1d8; --info:#2f5b8a; --info-soft:#e4ecf6; --ok:#2e6b45; --ok-soft:#e2f1e7;
-  --f-display:"Source Serif 4", Georgia, serif;
-  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Palette and type sampled from the Indiana courts self-service pages so the demo feels familiar. Text only: no seal, logo or "official website" claim. */
+  --bg:#f4f4f4; --surface:#ffffff; --sunk:#e5ebee; --line:#cfd8de;
+  --fg:#333333; --muted:#566573; --accent:#013b5a; --accent-ink:#ffffff; --accent-soft:#dbe9f1;
+  --warn:#8a5a00; --warn-soft:#fdf1d8; --info:#013b5a; --info-soft:#e4eef5; --ok:#2e6b45; --ok-soft:#e2f1e7;
+  --escape:#d9541e; --proto:#7a1f1f; --proto-soft:#fbe3e0;
+  --f-display:"Readex Pro", "Open Sans", Helvetica, Arial, sans-serif;
+  --f-body:"Rethink Sans", Helvetica, Arial, sans-serif;
   --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
 /* Feedback: dark UI was hard to read, so light is the default; dark is opt-in via the toggle only. */
@@ -23,9 +25,6 @@
   --warn:#f0c26a; --warn-soft:#3a2d12; --info:#8db5e6; --info-soft:#1c2c40; --ok:#7fcf9c; --ok-soft:#173022; color-scheme:dark}
 
 *{box-sizing:border-box}
-body{margin:0}
-.demobar{position:sticky;top:0;z-index:10;background:#a3122a;color:#fff;padding:12px 16px;text-align:center;font-weight:700;font-size:1rem;box-shadow:0 2px 6px rgba(0,0,0,.2)}
-.demobar a{color:#fff}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6}
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
 header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:20px}
@@ -36,6 +35,27 @@ h1{font-family:var(--f-display);font-size:1.75rem;line-height:1.2;margin:0;text-
 .tabs button[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.08)}
 button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
+/* Class-demo chrome: warning bar, agency-style header, nav strip, title banner */
+.protobar{position:sticky;top:0;z-index:20;background:var(--proto);color:#fff;text-align:center;padding:10px 16px;font-size:.92rem;font-weight:600}
+.protobar b{background:#fff;color:var(--proto);border-radius:4px;padding:1px 8px;margin-right:8px;letter-spacing:.06em}
+.agency{background:var(--surface);border-bottom:1px solid var(--line)}
+.in{max-width:1120px;margin:0 auto;padding:14px max(16px,env(safe-area-inset-left,0px));display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;justify-content:space-between}
+.brand{font-family:var(--f-display);font-weight:600;font-size:1.3rem;color:var(--accent);display:flex;align-items:center;gap:12px}
+.brand::before{content:"";width:40px;height:40px;border-radius:50%;border:2px dashed var(--proto);display:inline-block}
+.brand small{display:block;font-family:var(--f-body);font-weight:500;font-size:.78rem;color:var(--muted);letter-spacing:.04em}
+.escape{font:inherit;font-weight:700;font-size:.85rem;letter-spacing:.06em;background:var(--escape);color:#fff;border:0;border-radius:6px;padding:9px 18px;cursor:pointer}
+.navstrip{background:var(--sunk);border-bottom:1px solid var(--line)}
+.navstrip .in{padding-block:6px}
+.navstrip .tabs{background:none;padding:0;gap:2px}
+.navstrip .tabs button{color:var(--accent);font-size:.95rem;border-radius:0;padding:10px 16px;border-bottom:3px solid transparent}
+.navstrip .tabs button[aria-selected="true"]{background:none;box-shadow:none;border-bottom-color:var(--accent);color:var(--accent)}
+.titlebanner{background:linear-gradient(120deg,#013b5a,#2f6b8e);color:#fff}
+.titlebanner .in{padding-block:26px;display:block}
+.titlebanner h1{color:#fff;font-size:1.9rem}
+.crumbs{margin:6px 0 0;font-size:.85rem;opacity:.9}
+.proto{display:flex;gap:8px;align-items:center;margin:0 0 14px;padding:6px 10px;border:1px dashed var(--proto);background:var(--proto-soft);color:var(--proto);border-radius:6px;font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+:root[data-theme="dark"]{--proto:#ffb4a8;--proto-soft:#3a1c18}
+:root[data-theme="dark"] .protobar{background:#7a1f1f}
 .headright{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .themebtn{font:inherit;font-size:.85rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:6px;padding:8px 12px;cursor:pointer}
 .steps{display:flex;flex-wrap:wrap;gap:8px;list-style:none;margin:0 0 12px;padding:0;counter-reset:s}
@@ -107,22 +127,29 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
 </style>
 </head>
 <body>
-<div class="demobar" role="alert">⚠ DEMO ONLY: a class project, NOT the Indiana court's filing site. Nothing you enter is sent to any court. <a href="https://www.in.gov/courts/selfservice/protection-orders/" rel="noopener">Real protection order help</a> · Hotline 1-800-332-7385 · <a href="filing.html">Full filing walkthrough (demo)</a></div>
+
+<div class="protobar" role="alert"><b>PROTOTYPE</b>Class demo by CS4535 Team 4. This is not an official court website. Do not enter real names, addresses or case details. Nothing is saved or filed.</div>
+<header class="agency">
+  <div class="in">
+    <div class="brand"><span>Petition Review<small>Self-Service Legal Center · class prototype</small></span></div>
+    <div class="headright">
+      <button class="themebtn" id="theme" type="button" aria-pressed="false">Dark mode</button>
+      <button class="escape" id="escape" type="button" title="Leaves this page right away">QUICK EXIT</button>
+    </div>
+  </div>
+</header>
+<nav class="navstrip" aria-label="Prototype views">
+  <div class="in"><div class="tabs" role="tablist">
+    <button id="tab-pet" role="tab" aria-selected="true">Petitioner preview</button>
+    <button id="tab-staff" role="tab" aria-selected="false">Court staff queue</button>
+  </div></div>
+</nav>
+<div class="titlebanner"><div class="in">
+  <h1>Petition Review Flags</h1>
+  <p class="crumbs">Courts › Self-Service Legal Center › Petition review (prototype)</p>
+</div></div>
 
 <div class="wrap">
-  <header class="top">
-    <div>
-      <p class="eyebrow">CS4535 Team 4 · Prototype, not an official court site</p>
-      <h1>Petition Review Flags</h1>
-    </div>
-    <div class="headright">
-      <div class="tabs" role="tablist">
-        <button id="tab-pet" role="tab" aria-selected="true">Petitioner preview</button>
-        <button id="tab-staff" role="tab" aria-selected="false">Court staff queue</button>
-      </div>
-      <button class="themebtn" id="theme" type="button" aria-pressed="false">Dark mode</button>
-    </div>
-  </header>
 
   <!-- PETITIONER VIEW -->
   <div id="view-pet">
@@ -198,7 +225,7 @@ footer{margin-top:28px;font-size:.8rem;color:var(--muted);border-top:1px solid v
     </div>
   </div>
 
-  <footer>Prototype checks are simple rules. In the full design, an LLM reads only the incident descriptions to pull out dates, places and separate incidents. Statute reference: <span class="cite">IC 35-45-10-1</span> (stalking definition). Field wording follows the Indiana Office of Judicial Administration's <a href="https://www.in.gov/courts/iocs/publications/po-forms/">Petition for an Order for Protection, PO-0100 (rev. 07/2026)</a> and Confidential Form, PO-0104.</footer>
+  <footer><p class="proto" role="note">Prototype · class demo · not an official court website</p>CS4535 Team 4 class project. Not affiliated with or endorsed by any court. Prototype checks are simple rules. In the full design, an LLM reads only the incident descriptions to pull out dates, places and separate incidents. Statute reference: <span class="cite">IC 35-45-10-1</span> (stalking definition). Field wording follows the Indiana Office of Judicial Administration's <a href="https://www.in.gov/courts/iocs/publications/po-forms/">Petition for an Order for Protection, PO-0100 (rev. 07/2026)</a> and Confidential Form, PO-0104.</footer>
 </div>
 <div class="toast" id="toast" hidden></div>
 
@@ -296,6 +323,10 @@ function show(v){
 }
 function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(t._h);t._h=setTimeout(()=>t.hidden=true,2400)}
 
+/* A prototype warning at the top of every panel and table, so no screenshot or section can be mistaken for a real court page. */
+const PROTO='<p class="proto" role="note">Prototype · class demo · not a real court form</p>';
+document.querySelectorAll(".panel,.tablewrap").forEach(el=>el.insertAdjacentHTML("afterbegin",PROTO));
+$("#escape").onclick=()=>{location.replace("https://www.weather.gov/")};
 $("#tab-pet").onclick=()=>show("pet");
 $("#tab-staff").onclick=()=>show("staff");
 $("#ground").onchange=e=>{pet.ground=e.target.value;renderNotes()};
@@ -310,7 +341,7 @@ $("#submit").onclick=()=>{
   const now=new Date(), t=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
   const ref="PO-"+(1041+queue.length);
   queue.push({t,ref,...JSON.parse(JSON.stringify(pet))});
-  toast(`Filed as ${ref}. Added to the end of the staff queue.`);
+  toast(`Demo only: nothing was filed. Added as ${ref} to the end of the example staff queue.`);
   show("staff");
 };
 $("#queue").addEventListener("click",e=>{const r=e.target.closest("tr.row");if(r){const p=queue[r.dataset.row];p.open=!p.open;renderQueue()}});
